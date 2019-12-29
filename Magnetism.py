@@ -52,23 +52,3 @@ class Path:
                                                            z[i, j, k] - zc]) ** 2
         return res[:, :, :, 0], res[:, :, :, 1], res[:, :, :, 2]
 
-
-n = 200
-r = 6
-h = 30
-grid_x, grid_y, grid_z = np.meshgrid(np.linspace(-5, 5, 5),
-                                     np.linspace(-5, 5, 5),
-                                     np.linspace(-40, 40, 10))
-c = h / (2 * n * np.pi)
-t = np.linspace(0, 2 * n * np.pi, 5000)
-xp = r * np.cos(t)
-yp = r * np.sin(t)
-zp = (h / (2 * np.pi * n)) * t - 15
-p = Path(list(xp), list(yp), list(zp))
-func = p.mag_func(grid_x, grid_y, grid_z)
-u, v, w = p.mag_func(grid_x, grid_y, grid_z)
-r = np.sqrt(u ** 2 + v ** 2 + w ** 2)
-ax1 = plt.subplot(111, projection='3d')
-ax1.plot(xp, yp, zp, 'r-')
-ax1.quiver(grid_x, grid_y, grid_z, u / r, v / r, w / r, length=2)
-plt.show()
