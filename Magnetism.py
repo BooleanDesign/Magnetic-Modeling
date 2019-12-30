@@ -1,6 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import axes3d
+import os
+
+base_config = {}
 
 
 def vector_length(x, y, z):
@@ -17,11 +20,12 @@ class Path:
     This defines the Path class which allows for the calculations of the magnetic field.
     """
 
-    def __init__(self, xs, ys, zs):
+    def __init__(self, xs, ys, zs, current=1.0):
         self.points = zip(*[xs, ys, zs])  # defines the points
         self.x = xs
         self.y = ys
         self.z = zs
+        self.current = current
         self.path_vectors = [(self.points[i + 1][0] - self.points[i][0],
                               self.points[i + 1][1] - self.points[i][1],
                               self.points[i + 1][2] - self.points[i][2]) for i in range(len(self.x) - 1)]
@@ -35,8 +39,17 @@ class Path:
                 (self.z[i + 1] - self.z[i]) ** 2)) for i in
                     range(len(self.x) - 1)])
 
-    def mag_func(self, x, y, z, current=1.0, mag_const=1.25663706212e-6):
-        mag_param = current * mag_const / (4 * np.pi)
+    def mag_func(self, x, y, z, mag_const=1.25663706212e-6):
+        """
+        Generates the magnetic field function for the class.
+        :param x: np.meshgrid
+        :param y: np.meshgrid
+        :param z: np.meshgrid
+        :param mag_const: Mu_naut
+        :return: Returns meshgrid of vector form Biot-Savart
+        """
+        # TODO: Better comments throughout the function
+        mag_param = self.current * mag_const / (4 * np.pi)
         s = x.shape
         res = np.zeros((s[0], s[1], s[2], 3))
         for i in range(s[0]):
@@ -51,4 +64,3 @@ class Path:
                                            np.linalg.norm([x[i, j, k] - xc, y[i, j, k] - yc,
                                                            z[i, j, k] - zc]) ** 2
         return res[:, :, :, 0], res[:, :, :, 1], res[:, :, :, 2]
-
