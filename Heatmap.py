@@ -18,7 +18,7 @@ def init_function():
     """
     Defines the initial character of the system
     """
-    l = ax1.imshow(norm[:, :, 0])
+    l = ax1.imshow(norm[:, :, 0], cmap=plt.cm.seismic)
     l.set_clim(cmax, cmin)
     ax1.set_aspect('equal', adjustable='box')
     print str(np.amin(z))
@@ -29,7 +29,7 @@ def init_function():
 
 def animate(i):
     cax.cla()
-    l = ax1.imshow(norm[:, :, i])
+    l = ax1.imshow(norm[:, :, i], cmap=plt.cm.seismic)
     l.set_clim(cmax, cmin)
     ax1.set_title("Z=%s" % (str(np.amin(z) + (i * ((np.amax(z) - np.amin(z)) / frames)))))
     fig1.colorbar(l, cax=cax, extend='max')
@@ -51,9 +51,9 @@ path = mag.Path(x, y, z)
 Generating the field
 """
 
-frames = 500
-x_grid, y_grid, z_grid = np.meshgrid(np.linspace(-3, 3, 50),
-                                     np.linspace(-3, 3, 50),
+frames = 10
+x_grid, y_grid, z_grid = np.meshgrid(np.linspace(-3, 3, 3),
+                                     np.linspace(-3, 3, 3),
                                      np.linspace(-5, 20, frames))
 
 w, v, u = path.mag_func(x_grid, y_grid, z_grid)
@@ -64,6 +64,9 @@ fig1 = plt.figure()
 ax1 = fig1.add_subplot(111)
 div = make_axes_locatable(ax1)
 cax = div.append_axes('right', size='5%', pad=0.05)
+plt.suptitle(r"$\parallel \vec{B} \parallel$ From Wire")
+ax1.set_xlabel(r"$x$")
+ax1.set_ylabel(r"$y$")
 cmin = np.amin(norm)
 cmax = np.amax(norm)
 ani = animation.FuncAnimation(fig1, animate, frames=frames, interval=100, init_func=init_function)
